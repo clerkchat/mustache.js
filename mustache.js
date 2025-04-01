@@ -403,17 +403,18 @@ Context.prototype.resolvePipelineOperator = function resolvePipelineOperator(
   value,
   pipelines,
 ) {
+  // TODO: Rewrite this
   var self = this;
-  var pipelineResolver = function pipelineResolver(val, func) {
-    var findFunction = function (
+  const pipelineResolver = (val, func) => {
+    const findFunction = (
       instance,
       functionToFind,
-      valueToPutInFoundFunction,
+      valueForFunction,
       depth,
-    ) {
+    ) => {
       if (depth <= 0 || !instance) return null;
       if (instance.view.hasOwnProperty(functionToFind))
-        return instance.view[func](valueToPutInFoundFunction);
+        return instance.view[func](valueForFunction);
 
       return findFunction(instance.parent, functionToFind, val, depth);
     };
@@ -431,13 +432,12 @@ Context.prototype.resolvePipelineOperator = function resolvePipelineOperator(
  */
 Context.prototype.lookup = function lookup(name) {
   // {{variable |> pipelineOne |> pipelineTwo}}
-  // output: [variable,pipelineOne, pipelineTwo ]
-  var replacedName = name
-    .replace(new RegExp(spaceRe, "g"), "")
-    .split(pipelineRe);
+  // output: [variable, pipelineOne, pipelineTwo]
 
-  name = replacedName.shift();
-  var pipelines = replacedName;
+  var tokens = name.replace(new RegExp(spaceRe, "g"), "").split(pipelineRe);
+
+  name = tokens.shift();
+  var pipelines = tokens;
 
   var cache = this.cache;
 
