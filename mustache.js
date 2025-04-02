@@ -410,7 +410,7 @@ Context.prototype.resolvePipelineOperator = function resolvePipelineOperator(
       if (depth <= 0 || !instance) return null;
       if (instance.view.hasOwnProperty(func)) return instance.view[func];
 
-      return findFunction(instance.parent, func, depth);
+      return findFunction(instance.parent, func, depth - 1);
     };
 
     var foundFunction = findFunction(self, func, 20);
