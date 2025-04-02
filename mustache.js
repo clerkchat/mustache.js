@@ -403,25 +403,19 @@ Context.prototype.resolvePipelineOperator = function resolvePipelineOperator(
   value,
   pipelines,
 ) {
-  // TODO: Rewrite this
+  // TODO: Rewrite this until it's good
   var self = this;
   const pipelineResolver = (val, func) => {
-    const findFunction = (
-      instance,
-      functionToFind,
-      valueForFunction,
-      depth,
-    ) => {
+    const findFunction = (instance, func, depth) => {
       if (depth <= 0 || !instance) return null;
-      if (instance.view.hasOwnProperty(functionToFind))
-        return instance.view[func](valueForFunction);
+      if (instance.view.hasOwnProperty(func)) return instance.view[func];
 
-      return findFunction(instance.parent, functionToFind, val, depth);
+      return findFunction(instance.parent, func, depth);
     };
 
-    var foundFunction = findFunction(self, func, val, 20);
+    var foundFunction = findFunction(self, func, 20);
 
-    return foundFunction ? foundFunction : val;
+    return foundFunction ? foundFunction(val) : val;
   };
   return pipelines.reduce(pipelineResolver, value);
 };
